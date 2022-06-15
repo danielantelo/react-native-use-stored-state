@@ -1,0 +1,33 @@
+{
+  "name": "react-native-use-stored-state",
+  "version": "0.1.0",
+  "description": "State hook for react-native and react-native-web that allows easy usage of state that is persisted. It is a wrapper of async-storage which simplifies its usage for objects and loading states.",
+  "files": [
+    "dist"
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "packageManager": "yarn@3.2.1",
+  "engines": {
+    "node": "^16",
+    "npm": "please-use-yarn",
+    "yarn": ">=3.2"
+  },
+  "scripts": {
+    "typecheck": "tsc --noemit",
+    "prepublish": "tsc"
+  },
+  "dependencies": {
+    "@react-native-async-storage/async-storage": "^1.17.4"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.12",
+    "react": "^17.0.0",
+    "react-native": "^0.68.0",
+    "typescript": "^4.6.0"
+  },
+  "peerDependencies": {
+    "react": ">=17.0.0",
+    "react-native": ">=0.67.0"
+  }
+}
