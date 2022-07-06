@@ -1,34 +1,35 @@
 import { useEffect, useState } from 'react';
-import { useAsyncStorage } from '@react-native-async-storage/async-storage';
+import AsyncStorage from '@react-native-community/async-storage';
 
 const useStoredState = <T>(
   key: string,
   defaultValue?: T
 ): [T | undefined, (newValue: T) => void, boolean, () => void] => {
-  const [value, setValue] = useState<T>();
+  const [value, setValue] = useState<T | undefined>(defaultValue);
   const [loaded, setLoaded] = useState<boolean>(false);
-  const { getItem, setItem, removeItem } = useAsyncStorage(key);
-
-  const readItemFromStorage = async () => {
-    const item = await getItem();
-    setValue(item ? JSON.parse(item) : defaultValue);
-    setLoaded(true);
-  };
-
-  const writeItemToStorage = async (newValue: T) => {
-    await setItem(JSON.stringify(newValue));
-    setValue(newValue);
-  };
 
   useEffect(() => {
     let isMounted = true;
-    if (isMounted) readItemFromStorage();
+    if (isMounted) readItem();
     return () => {
       isMounted = false;
     };
   }, []);
 
-  return [value, writeItemToStorage, loaded, removeItem];
+  const readItem = async () => {
+    const item = await AsyncStorage.getItem(key);
+    setValue(item ? JSON.parse(item) : defaultValue);
+    setLoaded(true);
+  };
+
+  const writeItem = (newValue: T) => {
+    setValue(newValue);
+    AsyncStorage.setItem(key, JSON.stringify(newValue));
+  };
+
+  const removeItem = () => AsyncStorage.removeItem(key);
+
+  return [value, writeItem, loaded, removeItem];
 };
 
 export default useStoredState;

@@ -58,7 +58,7 @@ interface MyState {
 }
 
 const MyComponent = (): ReactElement => {
-  const [myName, setMyName, myNameIsLoaded] = useStoredState<String>('NAME_KEY_FOR_ASYNC_STORAGE');
+  const [myName, setMyName, myNameIsLoaded] = useStoredState<string>('NAME_KEY_FOR_ASYNC_STORAGE');
   const [myState, setMyState, myStateIsLoaded] = useStoredState<MyState>('MY_STATE_KEY_FOR_ASYNC_STORAGE', {
     active: false,
   });
