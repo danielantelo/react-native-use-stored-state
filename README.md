@@ -12,9 +12,16 @@ yarn add react-native-use-stored-state
 Usage:
 
 ```javascript
+const reducer = (prevState, action) => {
+  switch (action.type) {
+    case 'age':
+      return {...prevState, active: action.payload.age };
+  }
+}
+
 const MyComponent = () => {
   const [myName, setMyName, myNameIsLoaded, unsetName] = useStoredState('NAME_KEY_FOR_ASYNC_STORAGE');
-  const [myState, setMyState, myStateIsLoaded, unsetMyState] = useStoredState('MY_STATE_KEY_FOR_ASYNC_STORAGE', {
+  const [myState, dispatch, myStateIsLoaded, unsetMyState] = useStoredReducer('MY_STATE_KEY_FOR_ASYNC_STORAGE', reducer, {
     active: false,
   });
 
@@ -27,9 +34,11 @@ const MyComponent = () => {
   };
 
   const onStateChange = (key, value) => {
-    setMyState({
-      ...myState,
-      [key]: value,
+    dispatch({
+      type: 'abc',
+      payload: {
+        [key]: value,
+      }
     });
   };
 
@@ -41,8 +50,9 @@ const MyComponent = () => {
   return (
     <Container>
       <Input value={myName} onChange={onNameChange} />
-      <Input value={myState.age} onChange={(value) => onStateChange('age', value)} />
       <Checkbox value={myState.active} onChange={(value) => onStateChange('active', value)} />
+      <Input value={myState.age} onChange={(value) => onStateChange('age', value)} />
+       <Input value={myState.year} onChange={(value) => onStateChange('year', value)} />
       <Button onPress={onClear}>Clear</Button>
     </Container>
   );
@@ -57,9 +67,18 @@ interface MyState {
   age?: number;
 }
 
+const ReducerAction = 'age' | 'year';
+
+const reducer = (prevState: MyState, action: ReducerAction): MyState => {
+  switch (action.type) {
+    case 'age':
+      return {...prevState, active: action.payload.age };
+  }
+}
+
 const MyComponent = (): ReactElement => {
   const [myName, setMyName, myNameIsLoaded] = useStoredState<string>('NAME_KEY_FOR_ASYNC_STORAGE');
-  const [myState, setMyState, myStateIsLoaded] = useStoredState<MyState>('MY_STATE_KEY_FOR_ASYNC_STORAGE', {
+  const [myState, setMyState, myStateIsLoaded] = useStoredReducer<MyState, ReducerAction>('MY_STATE_KEY_FOR_ASYNC_STORAGE', reducer, {
     active: false,
   });
 
@@ -72,9 +91,11 @@ const MyComponent = (): ReactElement => {
   };
 
   const onStateChange = <K extends keyof MyState>(key: K, value: MyState[K]) => {
-    setMyState({
-      ...myState,
-      [key]: value,
+    dispatch({
+      type: 'abc',
+      payload: {
+        [key]: value,
+      }
     });
   };
 
@@ -86,10 +107,12 @@ const MyComponent = (): ReactElement => {
   return (
     <Container>
       <Input value={myName} onChange={onNameChange} />
-      <Input value={myState.age} onChange={(value: string) => onStateChange('age', Number(value))} />
-      <Checkbox value={myState.active} onChange={(value: boolean) => onStateChange('active', value)} />
+      <Checkbox value={myState.active} onChange={(value) => onStateChange('active', value)} />
+      <Input value={myState.age} onChange={(value) => onStateChange('age', value)} />
+       <Input value={myState.year} onChange={(value) => onStateChange('year', value)} />
       <Button onPress={onClear}>Clear</Button>
     </Container>
   );
 };
 ```
+
