@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useReducer, useState } from 'react';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const useStoredState = <T>(
   key: string,
@@ -62,6 +62,7 @@ export const useStoredReducer = <S, T extends string>(
 
   const readItem = useCallback(async () => {
     const item = await AsyncStorage.getItem(key);
+    // @ts-ignore
     if (item) dispatch({ type: 'load', payload: item ? JSON.parse(item) : defaultValue });
     setLoaded(true);
   }, [key]);
