@@ -44,8 +44,15 @@ export const useStoredReducer = <S, T extends string>(
   defaultValue?: S
 ): [S | undefined, (args: { type: T; payload: any }) => void, boolean, () => void] => {
   const reducer = (state: S, action: { type: T; payload: any }) => {
-    const newState = action.type === 'load' ? action.payload : stateReducer(state, action);
-    AsyncStorage.setItem(key, JSON.stringify(newState));
+    let newState;
+    if (action.type === 'load') {
+      newState = action.payload;
+    } else {
+      newState = stateReducer(state, action);
+    }
+
+    newState && AsyncStorage.setItem(key, JSON.stringify(newState));
+
     return newState;
   };
 
@@ -62,8 +69,11 @@ export const useStoredReducer = <S, T extends string>(
 
   const readItem = useCallback(async () => {
     const item = await AsyncStorage.getItem(key);
-    // @ts-ignore
-    if (item) dispatch({ type: 'load', payload: item ? JSON.parse(item) : defaultValue });
+    if (item) {
+      dispatch({ type: <T>'load', payload: item ? JSON.parse(item) : defaultValue });
+    } else if (defaultValue) {
+      dispatch({ type: <T>'load', payload: defaultValue });
+    }
     setLoaded(true);
   }, [key]);
 
